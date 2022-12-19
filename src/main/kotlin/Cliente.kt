@@ -1,8 +1,7 @@
 package com.contasbancarias
 
-import java.math.BigDecimal
-
 enum class TipoPlano { FISICO, DIGITAL, PREMIUM }
+
 abstract class Cliente(
     val nome: String,
     val sobrenome: String,
@@ -21,17 +20,12 @@ class ClienteNormal(
     sobrenome: String,
     cpf: String,
     senha: String,
-) : Cliente(nome, sobrenome, cpf, senha, plano = TipoPlano.FISICO), CarteiraFisica {
-
-    override val tipo: TipoCarteira
-        get() = TipoCarteira.DIGITAL
-    override var saldo = BigDecimal.ZERO
-        get() = saldo
-        set(value) { field = value }
-
-    override fun pagarBoleto(valor: Double) {
-        super.pagarBoleto(valor)
-        println("$nomeCompleto pagou um boleto de R$ $valor")
+    saldoInicialFisico: Double
+) : Cliente(nome, sobrenome, cpf, senha, plano = TipoPlano.FISICO) {
+    val carteiraFisica = CarteiraFisica(this)
+    init {
+        carteiraFisica.saldo = saldoInicialFisico
+        println("Criada carteira física de $nomeCompleto com saldo inicial de ${"%.2f".format(carteiraFisica.saldo)}.")
     }
 }
 
@@ -40,43 +34,29 @@ class ClienteDigital(
     sobrenome: String,
     cpf: String,
     senha: String,
-) : Cliente(nome, sobrenome, cpf, senha, TipoPlano.DIGITAL), CarteiraFisica {
-
-    override val tipo: TipoCarteira
-        get() = TipoCarteira.DIGITAL
-    override var saldo = BigDecimal.ZERO
-    override val extrato = mutableListOf<String>()
-    override fun pagarBoleto() {
-        TODO("Not yet implemented")
+    saldoInicialDigital: Double
+) : Cliente(nome, sobrenome, cpf, senha, TipoPlano.DIGITAL) {
+    val carteiraDigital = CarteiraDigital(this)
+    init {
+        carteiraDigital.saldo = saldoInicialDigital
+        println("Criada carteira digital de $nomeCompleto com saldo inicial de ${"%.2f".format(carteiraDigital.saldo)}.")
     }
-
 }
 
 class ClientePremium(
     nome: String,
     sobrenome: String,
     cpf: String,
-    senha: String
-) : Cliente(nome, sobrenome, cpf, senha, TipoPlano.PREMIUM), CarteiraFisica {
+    senha: String,
+    saldoInicialFisico: Double = 0.0,
+    saldoInicialDigital: Double = 0.0,
+    ) : Cliente(nome, sobrenome, cpf, senha, TipoPlano.PREMIUM) {
+    val carteiraDigital = CarteiraDigital(this)
+    val carteiraFisica = CarteiraFisica(this)
+    init {
+        carteiraFisica.saldo = saldoInicialFisico
+        carteiraDigital.saldo = saldoInicialDigital
 
-//    override fun deposito(d: Double) {
-//        TODO("Not yet implemented")
-//    }
-//
-//    override fun saque() {
-//        TODO("Not yet implemented")
-//    }
-
-    override val tipo: TipoCarteira
-        get() = TODO("Not yet implemented")
-    override var saldo: BigDecimal
-        get() = TODO("Not yet implemented")
-        set(value) {}
-    override val extrato: MutableList<String>
-        get() = TODO("Not yet implemented")
-
-    override fun pagarBoleto() {
-        TODO("Not yet implemented")
+        println("Criadas carteiras física e digital de $nomeCompleto com saldos iniciais de R$ ${"%.2f".format(carteiraFisica.saldo)} e R$ ${"%.2f".format(carteiraDigital.saldo)}, respectivamente.")
     }
-
 }
