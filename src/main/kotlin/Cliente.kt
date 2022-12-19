@@ -8,8 +8,13 @@ abstract class Cliente(
     val sobrenome: String,
     val cpf: String,
     val senha: String,
-    val plano: TipoPlano
-)
+    val plano: TipoPlano,
+) {
+    val nomeCompleto
+        get() = "$nome $sobrenome"
+    private var saldo = 0.0
+    private val extrato = mutableListOf<String>()
+}
 
 class ClienteNormal(
     nome: String,
@@ -17,26 +22,17 @@ class ClienteNormal(
     cpf: String,
     senha: String,
 ) : Cliente(nome, sobrenome, cpf, senha, plano = TipoPlano.FISICO), CarteiraFisica {
-    override fun deposito() {
-        TODO("Not yet implemented")
-    }
-
-    override fun saque() {
-        TODO("Not yet implemented")
-    }
 
     override val tipo: TipoCarteira
-        get() = TODO("Not yet implemented")
-    override var saldo: BigDecimal
-        get() = TODO("Not yet implemented")
-        set(value) {}
-    override val extrato: MutableList<String>
-        get() = TODO("Not yet implemented")
+        get() = TipoCarteira.DIGITAL
+    override var saldo = BigDecimal.ZERO
+        get() = saldo
+        set(value) { field = value }
 
-    override fun pagarBoleto() {
-        TODO("Not yet implemented")
+    override fun pagarBoleto(valor: Double) {
+        super.pagarBoleto(valor)
+        println("$nomeCompleto pagou um boleto de R$ $valor")
     }
-
 }
 
 class ClienteDigital(
@@ -44,24 +40,12 @@ class ClienteDigital(
     sobrenome: String,
     cpf: String,
     senha: String,
-    plano: TipoPlano
-) : Cliente(nome, sobrenome, cpf, senha, plano), CarteiraFisica {
-    override fun deposito() {
-        TODO("Not yet implemented")
-    }
-
-    override fun saque() {
-        TODO("Not yet implemented")
-    }
+) : Cliente(nome, sobrenome, cpf, senha, TipoPlano.DIGITAL), CarteiraFisica {
 
     override val tipo: TipoCarteira
-        get() = TODO("Not yet implemented")
-    override var saldo: BigDecimal
-        get() = TODO("Not yet implemented")
-        set(value) {}
-    override val extrato: MutableList<String>
-        get() = TODO("Not yet implemented")
-
+        get() = TipoCarteira.DIGITAL
+    override var saldo = BigDecimal.ZERO
+    override val extrato = mutableListOf<String>()
     override fun pagarBoleto() {
         TODO("Not yet implemented")
     }
@@ -70,18 +54,18 @@ class ClienteDigital(
 
 class ClientePremium(
     nome: String,
-                         sobrenome: String,
-                         cpf: String,
-                         senha: String,
-                         plano: TipoPlano
-) : Cliente(nome, sobrenome, cpf, senha, plano), CarteiraFisica {
-    override fun deposito() {
-        TODO("Not yet implemented")
-    }
+    sobrenome: String,
+    cpf: String,
+    senha: String
+) : Cliente(nome, sobrenome, cpf, senha, TipoPlano.PREMIUM), CarteiraFisica {
 
-    override fun saque() {
-        TODO("Not yet implemented")
-    }
+//    override fun deposito(d: Double) {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun saque() {
+//        TODO("Not yet implemented")
+//    }
 
     override val tipo: TipoCarteira
         get() = TODO("Not yet implemented")
